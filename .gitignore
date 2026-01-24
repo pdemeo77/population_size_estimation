@@ -51,3 +51,7 @@ Thumbs.db
 *.tmp
 *.bak
 *.log
+
+# Documentation and PDF files (excluded from public repo)
+*.md
+*.pdf
