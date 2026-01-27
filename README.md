@@ -1,15 +1,26 @@
 # Population Size Estimation - A1-A5 Experiments
 
-Statistical validation of discrete population size estimators based on unique sequential IDs. This repository implements and compares classical estimation methods (German Tank, Spacing, Rank Inversion, Capture-Recapture) across five critical experimental scenarios.
+Statistical validation of discrete population size estimators based on unique sequential IDs.
+
+A comparative study of population size estimation methods (based on sampling).
+
+This repo implements and compares both classical estimation methods: German Tank and Capture-Recapture and new ones: Rank Inversion and Spacing.
+
+Five critical experimental scenarios are considered.
 
 ## 🎯 Overview
 
 Estimating the total size of a population from a finite sample of unique identifiers (IDs) is fundamental in many applications:
+
 - **Competitive Intelligence**: Estimate competitor's volume from public order/issue IDs
 - **Data Quality**: Detect missing or corrupted IDs in databases
 - **System Monitoring**: Estimate total users/posts/transactions from sampled IDs
 
 This project provides rigorous statistical validation through **5 benchmark experiments (A1-A5)** that test robustness across realistic scenarios.
+
+## Getting started
+
+The simple noteboook [./intro-nb.ipynb](./intro-nb.ipynb) provides an introduction to the estimators and usage.
 
 ## 📊 Experiments Summary
 
@@ -24,7 +35,8 @@ This project provides rigorous statistical validation through **5 benchmark expe
 ## 🎓 Key Findings
 
 ### German Tank Problem (Maximum-based)
-- **Formula**: $\hat{N} = \max(\text{sample}) + \frac{\max(\text{sample})}{m} - 1$
+- **Formula**: $\hat{N} =  \frac{(m+1)}{m} \max(\text{sample}) - 1$
+  
 - **Best for**: Clean sequential IDs starting at 1
 - **Fails when**: Offset is unknown or data contains outliers
 
