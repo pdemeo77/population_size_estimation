@@ -39,6 +39,7 @@ wheels/
 # IDE
 .vscode/
 .idea/
+.kilocode/
 *.swp
 *.swo
 *~
