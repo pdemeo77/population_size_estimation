@@ -53,6 +53,11 @@ Thumbs.db
 *.bak
 *.log
 
+# Data and Reproducibility
+data/**
+results/**
+figures/**
+
 # Documentation and PDF files (excluded from public repo)
 # Exception: README.md is allowed
 *.md

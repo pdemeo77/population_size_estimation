@@ -64,7 +64,8 @@ class HyperLogLogEstimator(BaseEstimator):
         """Estimate population size using HyperLogLog algorithm."""
         self.validate_input(sample)
         
-        registers = np.zeros(self.num_registers, dtype=np.int8)
+        # Use int32 to avoid int8 overflow: rho values can exceed 127 for large hash spaces
+        registers = np.zeros(self.num_registers, dtype=np.int32)
         
         for element in sample:
             hash_val = self._hash(int(element))
@@ -73,8 +74,10 @@ class HyperLogLogEstimator(BaseEstimator):
             rho = self._rho(remaining_bits) + 1
             registers[register_idx] = max(registers[register_idx], rho)
         
-        # Compute raw estimate using harmonic mean
-        z = np.sum(1.0 / (1 << registers[registers > 0]))
+        # Compute raw estimate using harmonic mean over ALL registers (including zeros).
+        # When M_j == 0, the contribution is 2^(-0) == 1.0 — excluding zero registers
+        # would undercount z and inflate the estimate.
+        z = np.sum(2.0 ** (-registers.astype(float)))
         raw_estimate = self._alpha * (self.num_registers ** 2) / z
         
         # Apply range corrections

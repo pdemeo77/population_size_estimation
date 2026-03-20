@@ -75,16 +75,16 @@ class MinCountEstimator(BaseEstimator):
         # Hash all elements
         hash_values = np.array([self._hash(int(x)) for x in sample])
         
-        # Find k smallest values
-        if len(hash_values) < self.k:
-            k_smallest = np.sort(hash_values)
+        # Find the k-th smallest hash value.
+        # np.partition(a, kth) guarantees that a[kth] is the value that would be
+        # there in a sorted array, so index [effective_k - 1] is the k-th smallest.
+        # We must use effective_k - 1 as the partition index (must be < len(a)).
+        if len(hash_values) <= self.k:
             effective_k = len(hash_values)
+            u_k = np.max(hash_values)  # all values, so the max is the k-th smallest
         else:
-            k_smallest = np.partition(hash_values, self.k)[:self.k]
             effective_k = self.k
-        
-        # k-th smallest value
-        u_k = k_smallest[effective_k - 1]
+            u_k = np.partition(hash_values, effective_k - 1)[effective_k - 1]
         
         # MinCount estimate: n = (k - 1) * H / u_k
         if u_k > 0:

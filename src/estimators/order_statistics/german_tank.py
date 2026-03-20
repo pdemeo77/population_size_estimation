@@ -37,8 +37,9 @@ class GermanTankEstimator(BaseEstimator):
         estimate = float(max_obs + max_obs / m - 1)
         
         # Variance from order statistics
+        # Cast to float before multiplication to avoid integer overflow on large IDs
         if max_obs > m and m > 1:
-            variance = float((max_obs * (max_obs - m)) / (m * (m + 1)))
+            variance = float((float(max_obs) * (max_obs - m)) / (float(m) * (m + 1)))
             std_error = np.sqrt(variance)
             z = 1.96  # 95% CI
             ci_lower = max(1, estimate - z * std_error)

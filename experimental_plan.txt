@@ -1,0 +1,174 @@
+Great — here is a **well‑designed experimental proposal** plus **three concrete, large‑scale Web datasets** that are realistic, publicly available, and appropriate for testing **population size estimators under offset, gaps, non‑uniform sampling, and hashing/normalisation effects**.
+
+
+
+# ✅ **1. Proposed New Experiment: “Offset, Gaps, and Sampling-Bias Robustness on Web-Scale Graph IDs”**
+
+### **Goal**
+
+Evaluate RIE, SE, GT, CR, and a few standard cardinality‑estimation baselines  
+(**HyperLogLog**, **Flajolet–Martin**, and **MinCount**)  
+under *realistic* Web‑graph conditions:
+
+*   ID spaces are extremely large (up to billions).
+*   IDs have **large unknown offsets**, **massive gaps**, or **non‑uniform assignment**.
+*   Sampling is **not uniform** (common in crawling APIs).
+*   Graph nodes are **discovered progressively** (BFS/DFS/random‑walk bias).
+*   Debug how hashing (HLL‑style) interacts with the RIE/SE machinery.
+
+This experiment positions your work relative to the cardinality‑estimation literature *even though your goals differ*, allowing readers to see where your methods succeed/fail in real Web settings.
+
+***
+
+# 🎯 **2. Experimental Protocol (Detailed)**
+
+### **Step 1 — Choose a large Web dataset and extract its node IDs**
+
+Use datasets where node IDs are:
+
+*   non‑consecutive,
+*   often hashed or opaque,
+*   sometimes extremely sparse,
+*   sometimes offset by millions.
+
+### **Step 2 — Create sampling processes**
+
+Simulate three realistic Web sampling regimes:
+
+1.  **Uniform node sampling**  
+    (rarely realistic but provides a clean baseline)
+
+2.  **Crawl‑based sampling**
+    *   BFS
+    *   Random walk / Metropolis–Hastings
+    *   Frontier‑based sampling (e.g., API pagination)
+
+3.  **Hash‑based sampling**
+    *   HLL/Flajolet–Martin style: hash IDs and perform Bernoulli sampling
+    *   Evaluate how hashing interacts with RIE/SE
+
+For each regime, collect a sample of size $$m$$ at various sampling fractions $$\rho = m/N$$.
+
+### **Step 3 — Apply estimators**
+
+For each sample run:
+
+*   GT
+*   RIE
+*   SE
+*   CR (if overlap exists)
+*   HyperLogLog
+*   Flajolet–Martin
+*   MinCount
+*   RIE‑med (your translation‑invariant variant)
+
+### **Step 4 — Inject synthetic distortions**
+
+To test robustness:
+
+*   Add large **offsets** (e.g., +10^9).
+*   Add **gaps** (remove 20–50% of IDs).
+*   Add **multiplicative corruption** (ID × (1+q)).
+*   Add **non‑uniform popularity weighting** (Zipfian sampling).
+
+### **Step 5 — Evaluate metrics**
+
+For each estimator:
+
+*   **Relative error**
+*   **Bias direction**
+*   **Variance**
+*   **Robustness curves** vs offset, vs corruption fraction, vs gap ratio
+*   **Runtime and memory cost**
+*   **Behaviour under hash mapping** (only HLL/Flajolet–Martin are hash‑stable)
+
+***
+
+# 🚀 **3. Recommended Datasets (large, Web‑related, realistic)**
+
+Below are **three excellent choices** drawn from the largest Web‑graph and social‑network repositories available  
+(SNAP and Network Repository).    [\[networkrep...sitory.com\]](https://networkrepository.com/), [\[snap.stanford.edu\]](https://snap.stanford.edu/data/)
+
+***
+
+## **Dataset A — LiveJournal Social Network (SNAP)**
+
+**Source:** SNAP: soc-LiveJournal1    [\[snap.stanford.edu\]](https://snap.stanford.edu/data/)
+
+*   **Nodes:** 4.8 million
+*   **Edges:** 69 million
+*   **Properties:**
+    *   Node IDs are **non-consecutive**.
+    *   Large ID universe → perfect for testing offset/gap sensitivity.
+    *   Good for random‑walk sampling tests (high degree variance).
+*   **Why useful:**
+    *   Real Web‑scale social network
+    *   Perfect to evaluate how RIE/SE/CR behave with massive gaps in ID space
+    *   Excellent for sampling‑bias experiments (BFS is heavily biased)
+
+***
+
+## **Dataset B — Pokec Social Network (SNAP)**
+
+**Source:** SNAP: soc-Pokec    [\[snap.stanford.edu\]](https://snap.stanford.edu/data/)
+
+*   **Nodes:** 1.6 million
+*   **Edges:** 30 million
+*   **Properties:**
+    *   IDs have large offsets and some irregularities
+    *   Highly skewed degree distribution → tests robustness under popularity bias
+*   **Why useful:**
+    *   Real user IDs that are “semi‑structured,” not nice integers
+    *   Very good for hash‑based sampling (HLL vs RIE/SE comparison)
+
+***
+
+## **Dataset C — Web Graphs (NetworkRepository / SNAP Web‑Graph)**
+
+**Sources:**
+
+*   NetworkRepository Web graphs    [\[networkrep...sitory.com\]](https://networkrepository.com/)
+*   SNAP “Web‑Google” / “Web‑Stanford” / “Web‑BerkStan”    [\[snap.stanford.edu\]](https://snap.stanford.edu/data/)
+
+**Sizes:** between 280k and 3 million nodes (depending on choice)
+
+**Properties:**
+
+*   Webpage IDs are **not sequential**, often arbitrary strings mapped to numbers.
+*   The ID space is **huge** compared to |V| → perfect for testing offset/gaps.
+*   Crawling simulations (BFS/DFS/random‑walk) naturally reflect Web behaviour.
+
+**Why useful:**
+
+*   Best dataset to test robustness to “pathological” ID spaces.
+*   Critical for comparing RIE/SE against hash‑based cardinality estimators.
+*   Ideal for looking at sensitivity to “clustered discovery” typical of web crawling.
+
+***
+
+# ⭐ Bonus: Optional Fourth Dataset
+
+## **Wikipedia Page–Edit Graph (SNAP: wiki-talk or wiki-vote)**
+
+ [\[snap.stanford.edu\]](https://snap.stanford.edu/data/)
+
+*   Smaller (7k–100k nodes) but with **very non‑uniform sampling distribution**.
+*   Perfect for testing CR-based estimation (two samples = two edit ranges).
+
+***
+
+# 📌 **Summary Recommendation**
+
+Use:
+
+*   **LiveJournal** → test robustness under huge ID space, offset, gaps.
+*   **Pokec** → test hash-based and non-uniform sampling.
+*   **Web‑Google or Web‑Stanford** → simulate real crawling.
+
+Paired with:
+
+*   **Three sampling regimes** (uniform vs crawling vs hash-based).
+*   **Four distortions** (offset, gaps, multiplicative corruption, Zipf bias).
+*   **Seven estimators** (GT, RIE, RIE‑med, SE, CR, HLL, FM).
+
+This will make your experimental section cutting‑edge and show clearly why your estimators fill a gap between order‑statistic methods and streaming cardinality estimators.

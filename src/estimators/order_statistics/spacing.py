@@ -85,8 +85,20 @@ class SpacingEstimator(BaseEstimator):
         else:
             variance = None
         
+        # Build CI from variance when available
+        if variance is not None:
+            std_error = np.sqrt(variance)
+            z = 1.96  # 95% CI
+            ci_lower = max(1, estimate - z * std_error)
+            ci_upper = estimate + z * std_error
+        else:
+            ci_lower = None
+            ci_upper = None
+
         return EstimationResult(
             estimate=estimate,
+            ci_lower=ci_lower,
+            ci_upper=ci_upper,
             variance=variance,
             metadata={
                 'median_spacing': float(median_spacing),
