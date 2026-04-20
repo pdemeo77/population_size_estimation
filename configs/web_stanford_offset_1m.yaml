@@ -1,0 +1,21 @@
+# Phase 2 Experiment: Offset / Translation Test
+# Tests how estimators handle unknown offsets in ID space
+# Hypothesis: Spacing should outperform German Tank when offset is unknown
+
+dataset: web-Stanford
+sampler: uniform
+sample_fractions: [0.001, 0.005, 0.01, 0.05, 0.1]
+
+estimators:
+  - german_tank
+  - spacing
+  - rank_inversion
+  - capture_recapture
+
+distortions:
+  offset: 1000000  # Add unknown 1M offset to all IDs
+  gap_fraction: 0
+
+num_repeats: 100
+random_seed: 42
+output: results/web_stanford_offset_1m.json

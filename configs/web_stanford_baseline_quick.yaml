@@ -1,6 +1,4 @@
-# Baseline experiment configuration for web-Stanford dataset
-# Smallest dataset for quick testing
-
+# Quick baseline with reduced repeats to complete faster
 dataset: web-Stanford
 sampler: uniform
 sample_fractions: [0.001, 0.005, 0.01, 0.05, 0.1]
@@ -15,6 +13,6 @@ distortions:
   offset: 0
   gap_fraction: 0
 
-num_repeats: 100
+num_repeats: 10  # Reduced from 100 to 10 = 300 total experiments instead of 3000
 random_seed: 42
-output: results/web_stanford_baseline.json
+output: results/web_stanford_baseline_quick.json

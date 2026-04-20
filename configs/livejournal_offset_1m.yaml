@@ -1,0 +1,26 @@
+# Phase 4: LiveJournal Social Network - Offset Robustness Test  
+# Multi-dataset validation with large network
+# Dataset: LiveJournal social network (4.8M nodes) - Largest platform tested
+
+dataset: "soc-LiveJournal1"
+estimators:
+  - german_tank
+  - spacing
+  - rank_inversion
+  - capture_recapture
+
+sample_fractions: [0.001, 0.005, 0.01, 0.05, 0.1]
+num_repeats: 100
+random_seed: 42
+
+distortions:
+  offset: 1000000
+  gap_fraction: 0
+
+output: results/livejournal_offset_1m_raw.json
+
+# Expected characteristics:
+# - LiveJournal social network: 4.8M nodes
+# - Offset 1M: Tests translation-invariance on large social network
+# - Validates whether findings generalize to very large (4.8M node) networks
+# - Largest network in Phase 4 generalization study

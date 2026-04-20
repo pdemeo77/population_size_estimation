@@ -13,9 +13,6 @@ from src.estimators import (
     SpacingEstimator,
     RankInversionEstimator,
     CaptureRecaptureEstimator,
-    FlajoletMartinEstimator,
-    HyperLogLogEstimator,
-    MinCountEstimator,
     create_estimator,
 )
 
@@ -174,81 +171,6 @@ class TestCaptureRecaptureEstimator:
             estimator.estimate(sample)
 
 
-class TestFlajoletMartinEstimator:
-    """Test Flajolet-Martin estimator."""
-    
-    def test_basic_estimate(self):
-        estimator = FlajoletMartinEstimator(num_hash_functions=32)
-        sample = np.arange(1, 10001)
-        result = estimator.estimate(sample)
-        
-        assert result.estimate > 0
-        assert result.metadata['num_hash_functions'] == 32
-    
-    def test_name(self):
-        estimator = FlajoletMartinEstimator()
-        assert estimator.name == "Flajolet-Martin"
-
-
-class TestHyperLogLogEstimator:
-    """Test HyperLogLog estimator."""
-    
-    def test_basic_estimate(self):
-        estimator = HyperLogLogEstimator(precision=10)
-        sample = np.arange(1, 10001)
-        result = estimator.estimate(sample)
-        
-        assert result.estimate > 0
-    
-    def test_precision_validation(self):
-        with pytest.raises(ValueError):
-            HyperLogLogEstimator(precision=2)  # Too low
-        
-        with pytest.raises(ValueError):
-            HyperLogLogEstimator(precision=20)  # Too high
-    
-    def test_hash_size_validation(self):
-        # hash_size must be >= precision
-        with pytest.raises(ValueError):
-            HyperLogLogEstimator(precision=14, hash_size=8)  # Too small
-        
-        # hash_size must be 32 or 64
-        with pytest.raises(ValueError):
-            HyperLogLogEstimator(precision=10, hash_size=48)  # Invalid
-    
-    def test_memory_usage(self):
-        estimator = HyperLogLogEstimator(precision=14)
-        assert estimator.memory_usage() == 2**14
-    
-    def test_name(self):
-        estimator = HyperLogLogEstimator()
-        assert estimator.name == "HyperLogLog"
-
-
-class TestMinCountEstimator:
-    """Test MinCount estimator."""
-    
-    def test_basic_estimate(self):
-        estimator = MinCountEstimator(k=100)
-        sample = np.arange(1, 10001)
-        result = estimator.estimate(sample)
-        
-        assert result.estimate > 0
-    
-    def test_name(self):
-        estimator = MinCountEstimator()
-        assert estimator.name == "MinCount"
-    
-    def test_hash_size_validation(self):
-        # hash_size must be <= 53 for float precision
-        with pytest.raises(ValueError):
-            MinCountEstimator(k=100, hash_size=64)  # Too large
-        
-        # hash_size must be >= 8
-        with pytest.raises(ValueError):
-            MinCountEstimator(k=100, hash_size=4)  # Too small
-
-
 class TestCreateEstimator:
     """Test factory function."""
     
@@ -256,13 +178,8 @@ class TestCreateEstimator:
         estimator = create_estimator('german_tank')
         assert isinstance(estimator, GermanTankEstimator)
     
-    def test_create_hyperloglog(self):
-        estimator = create_estimator('hll')
-        assert isinstance(estimator, HyperLogLogEstimator)
-    
     def test_create_with_alias(self):
-        # Test various aliases
-        assert isinstance(create_estimator('fm'), FlajoletMartinEstimator)
+        # Test CR alias
         assert isinstance(create_estimator('cr'), CaptureRecaptureEstimator)
     
     def test_unknown_type_raises(self):
@@ -286,23 +203,17 @@ class TestEstimatorIntegration:
             GermanTankEstimator(),
             SpacingEstimator(),
             RankInversionEstimator(),
-            FlajoletMartinEstimator(num_hash_functions=64),
-            HyperLogLogEstimator(precision=12),
-            MinCountEstimator(k=256),
         ]
         
         results = {}
         for estimator in estimators:
-            if estimator.requires_two_samples:
-                result = estimator.estimate(sample, sample2=sample2)
-            else:
-                result = estimator.estimate(sample)
+            result = estimator.estimate(sample)
             results[estimator.name] = result
             
             # All estimates should be positive
             assert result.estimate > 0, f"{estimator.name} gave non-positive estimate"
             
-            # Most should be within 50% of true value
+            # All should be within 50% of true value
             if result.estimate < float('inf'):
                 rel_error = abs(result.estimate - true_size) / true_size
                 print(f"{estimator.name}: estimate={result.estimate:.0f}, rel_error={rel_error:.2%}")

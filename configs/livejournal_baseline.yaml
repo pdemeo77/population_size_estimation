@@ -1,0 +1,26 @@
+# Phase 4: LiveJournal Social Network - Baseline Validation
+# Multi-dataset validation to test generalization across large social networks
+# Dataset: LiveJournal social network (4.8M nodes) - Largest platform tested
+
+dataset: "soc-LiveJournal1"
+estimators:
+  - german_tank
+  - spacing
+  - rank_inversion
+  - capture_recapture
+
+sample_fractions: [0.001, 0.005, 0.01, 0.05, 0.1]
+num_repeats: 100
+random_seed: 42
+
+distortions:
+  offset: 0
+  gap_fraction: 0
+
+output: results/livejournal_baseline_raw.json
+
+# Expected characteristics:
+# - LiveJournal social network: 4.8M nodes, 69M edges
+# - Largest social network in Phase 4
+# - Baseline (no distortion): Tests estimator accuracy on very large social network
+# - Scale comparison: Stanford (281K) < POKEC (1.6M) < LiveJournal (4.8M)

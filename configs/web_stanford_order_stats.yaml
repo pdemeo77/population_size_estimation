@@ -1,5 +1,5 @@
-# Baseline experiment configuration for web-Stanford dataset
-# Smallest dataset for quick testing
+# Test config: Order statistics only (no cardinality estimators)
+# To isolate potential crashes in HyperLogLog, Flajolet-Martin, MinCount
 
 dataset: web-Stanford
 sampler: uniform
@@ -17,4 +17,4 @@ distortions:
 
 num_repeats: 100
 random_seed: 42
-output: results/web_stanford_baseline.json
+output: results/web_stanford_order_stats.json

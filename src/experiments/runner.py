@@ -28,6 +28,19 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+class NumpyEncoder(json.JSONEncoder):
+    """Custom JSON encoder that handles numpy types."""
+    
+    def default(self, obj):
+        if isinstance(obj, (np.integer, np.floating)):
+            return obj.item()
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+
 class ExperimentRunner:
     """
     Runner for population size estimation experiments.
@@ -333,7 +346,7 @@ class ExperimentRunner:
         full_path.parent.mkdir(parents=True, exist_ok=True)
         
         with open(full_path, 'w') as f:
-            json.dump(results, f, indent=2)
+            json.dump(results, f, indent=2, cls=NumpyEncoder)
         
         logger.info(f"Results saved to {full_path}")
     
@@ -349,7 +362,9 @@ class ExperimentRunner:
         full_path.parent.mkdir(parents=True, exist_ok=True)
         
         with open(full_path, 'w') as f:
-            json.dump(aggregated, f, indent=2)
+            json.dump(aggregated, f, indent=2, cls=NumpyEncoder)
+        
+        logger.info(f"Aggregated results saved to {full_path}")
         
         logger.info(f"Aggregated results saved to {full_path}")
 

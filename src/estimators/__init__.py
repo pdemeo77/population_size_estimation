@@ -1,8 +1,8 @@
 """
 Population Size Estimators Module.
 
-This module provides a unified interface for various population size estimation
-methods, including order statistics-based and cardinality-based estimators.
+This module provides a unified interface for order statistics-based
+population size estimation methods.
 """
 
 from .base import BaseEstimator, EstimationResult, create_estimator
@@ -11,11 +11,6 @@ from .order_statistics import (
     SpacingEstimator,
     RankInversionEstimator,
     CaptureRecaptureEstimator,
-)
-from .cardinality import (
-    FlajoletMartinEstimator,
-    HyperLogLogEstimator,
-    MinCountEstimator,
 )
 
 __all__ = [
@@ -28,8 +23,4 @@ __all__ = [
     "SpacingEstimator",
     "RankInversionEstimator",
     "CaptureRecaptureEstimator",
-    # Cardinality estimators
-    "FlajoletMartinEstimator",
-    "HyperLogLogEstimator",
-    "MinCountEstimator",
 ]

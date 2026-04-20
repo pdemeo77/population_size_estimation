@@ -1,0 +1,26 @@
+# Phase 4: POKEC Social Network - Baseline Validation
+# Multi-dataset validation to test generalization of Phase 2 findings
+# Dataset: POKEC social network (1.6M nodes) - Large social network structure
+
+dataset: "soc-Pokec"
+estimators:
+  - german_tank
+  - spacing
+  - rank_inversion
+  - capture_recapture
+
+sample_fractions: [0.001, 0.005, 0.01, 0.05, 0.1]
+num_repeats: 100
+random_seed: 42
+
+distortions:
+  offset: 0
+  gap_fraction: 0
+
+output: results/pokec_baseline_raw.json
+
+# Expected characteristics:
+# - POKEC social network: 1.6M nodes, 30M edges
+# - Large social network (Central European social platform)
+# - Baseline (no distortion): Tests estimator accuracy on large social network
+# - Comparable to Stanford baseline for cross-dataset validation

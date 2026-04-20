@@ -1,0 +1,21 @@
+# Phase 2 Experiment: Sparsity / Gap Robustness Test
+# Tests how estimators handle missing sequential IDs (30% gaps)
+# Hypothesis: Rank Inversion should be more robust to gaps than German Tank
+
+dataset: web-Stanford
+sampler: uniform
+sample_fractions: [0.001, 0.005, 0.01, 0.05, 0.1]
+
+estimators:
+  - german_tank
+  - spacing
+  - rank_inversion
+  - capture_recapture
+
+distortions:
+  offset: 0
+  gap_fraction: 0.3  # Remove 30% of sequential IDs
+
+num_repeats: 100
+random_seed: 42
+output: results/web_stanford_gaps_30pct.json

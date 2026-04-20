@@ -249,11 +249,6 @@ def create_estimator(estimator_type: str, **kwargs) -> BaseEstimator:
         RankInversionEstimator,
         CaptureRecaptureEstimator,
     )
-    from .cardinality import (
-        FlajoletMartinEstimator,
-        HyperLogLogEstimator,
-        MinCountEstimator,
-    )
     
     estimators = {
         'german_tank': GermanTankEstimator,
@@ -261,11 +256,6 @@ def create_estimator(estimator_type: str, **kwargs) -> BaseEstimator:
         'rank_inversion': RankInversionEstimator,
         'capture_recapture': CaptureRecaptureEstimator,
         'cr': CaptureRecaptureEstimator,
-        'flajolet_martin': FlajoletMartinEstimator,
-        'fm': FlajoletMartinEstimator,
-        'hyperloglog': HyperLogLogEstimator,
-        'hll': HyperLogLogEstimator,
-        'mincount': MinCountEstimator,
     }
     
     key = estimator_type.lower().replace('-', '_').replace(' ', '_')

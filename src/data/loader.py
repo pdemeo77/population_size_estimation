@@ -34,7 +34,7 @@ SNAP_DATASETS: Dict[str, Dict[str, str]] = {
         "edges": "5.1M",
     },
     "soc-Pokec": {
-        "url": "https://snap.stanford.edu/data/soc-Pokec-relationships.txt.gz",
+        "url": "https://snap.stanford.edu/data/soc-pokec-relationships.txt.gz",
         "description": "Social network from Pokec",
         "nodes": "1.6M",
         "edges": "30M",
@@ -44,6 +44,18 @@ SNAP_DATASETS: Dict[str, Dict[str, str]] = {
         "description": "Social network from LiveJournal",
         "nodes": "4.8M",
         "edges": "69M",
+    },
+    "soc-twitter-follows": {
+        "url": "https://snap.stanford.edu/data/twitter_combined.txt.gz",
+        "description": "Twitter social network (follower relationships)",
+        "nodes": "1.9M",
+        "edges": "1.5B",
+    },
+    "road-USA": {
+        "url": "https://snap.stanford.edu/data/usa.osm.graph.txt.gz",
+        "description": "USA road network from OpenStreetMap",
+        "nodes": "23.9M",
+        "edges": "58.3M",
     },
 }
 

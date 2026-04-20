@@ -1,0 +1,26 @@
+# Phase 4: POKEC Social Network - Offset Robustness Test
+# Multi-dataset validation to test offset-invariance generalization
+# Dataset: POKEC social network (1.6M nodes) - Large social network
+
+dataset: "soc-Pokec"
+estimators:
+  - german_tank
+  - spacing
+  - rank_inversion
+  - capture_recapture
+
+sample_fractions: [0.001, 0.005, 0.01, 0.05, 0.1]
+num_repeats: 100
+random_seed: 42
+
+distortions:
+  offset: 1000000
+  gap_fraction: 0
+
+output: results/pokec_offset_1m_raw.json
+
+# Expected characteristics:
+# - POKEC social network: 1.6M nodes
+# - Offset 1M: Tests translation-invariance hypothesis on social network
+# - Hypothesis from Phase 2 (Stanford): Spacing should maintain ~1% error, German Tank should fail
+# - This validates whether findings generalize to large social networks
